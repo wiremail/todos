@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:6.0.4
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    volumes:
+      # seeding scripts
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
+      # named volumes
+      - mongodb:/data/db
+      - mongoconfig:/data/configdb
+    environment:
+      - MONGO_INITDB_DATABASE=todos
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    restart: always
+
+volumes:
+  mongodb:
+  mongoconfig:

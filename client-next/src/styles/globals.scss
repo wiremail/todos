@@ -1,0 +1,50 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #eee;
+  color: #333;
+  font-size: 20px;
+}
+
+#__next {
+  min-height: 100vh;
+  display: grid;
+  grid-auto-rows: auto 1fr auto;
+}
+
+main {
+  padding: 20px;
+}
+
+header,
+footer {
+  min-height: 50px;
+}
+
+header {
+  background-color: dimgray;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+footer {
+  background-color: dimgray;
+  text-align: center;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+a {
+  color: #111;
+  text-decoration: none;
+}
