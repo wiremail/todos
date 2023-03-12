@@ -40,7 +40,7 @@ const TodoInfo = ({ todo }) => {
       return router.push('/todos')
     }
 
-    alert(json.message)
+    alert(response.statusText)
   }
 
   return (

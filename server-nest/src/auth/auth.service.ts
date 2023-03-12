@@ -24,7 +24,6 @@ export class AuthService {
 
   // User Registration
   async signup(createUserDto: CreateUserDto): Promise<IEnpointResponse> {
-    console.log(createUserDto)
     let user = await this.userModel.findOne({ name: createUserDto.name })
     if (user) throw new BadRequestException(`The name ${createUserDto.name} is alredy taken`)
 

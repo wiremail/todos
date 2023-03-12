@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
@@ -12,8 +12,6 @@ export class TodosService {
   constructor(@InjectModel(Todo.name) private todoModel: Model<TodoDocument>) { }
 
   async create(createTodoDto: CreateTodoDto, user: UserEntity): Promise<Todo> {
-    //const userId: string = parseJwt(request.cookies['jwt'])
-
     createTodoDto.userId = user.id
 
     const createdCat = new this.todoModel(createTodoDto)
@@ -25,7 +23,11 @@ export class TodosService {
   }
 
   async findById(id: string): Promise<Todo> {
-    return this.todoModel.findById(id)
+    const todo = this.todoModel.findById(id)
+    if (!todo) {
+      throw new HttpException('Todo NOT Found', HttpStatus.NOT_FOUND)
+    }
+    return todo
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto, user: UserEntity): Promise<Todo> {
@@ -37,10 +39,10 @@ export class TodosService {
   }
 
   async findByUser(user: UserEntity): Promise<Todo[]> {
-    return this.todoModel.find({ userId: user.id }).exec()
+    const todos = this.todoModel.find({ userId: user.id }).exec()
+    if (!todos) {
+      throw new HttpException('Todos NOT Found', HttpStatus.NOT_FOUND)
+    }
+    return todos
   }
 }
-
-// function parseJwt(jwt: string): string {
-//   return JSON.parse(Buffer.from(jwt.split('.')[1], 'base64').toString())?.id
-// }

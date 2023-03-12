@@ -32,7 +32,8 @@ const TodoCreate = () => {
       return router.push('/todos')
     }
 
-    alert(json.message)
+    //console.log(response)
+    alert(response.statusText)
   }
 
   return (

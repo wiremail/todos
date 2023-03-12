@@ -24,8 +24,6 @@ import styles from "@/styles/Todos.module.scss"
 const Todos = (/*{ todos }*/) => {
   const router = useRouter()
 
-
-
   const [todos, setTodos] = useState(null)
 
   useEffect(() => {
