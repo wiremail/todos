@@ -1,15 +1,20 @@
 import Head from 'next/head'
-import Heading from "@/components/Heading"
-import styles from "@/styles/Home.module.scss"
+import Image from "next/image"
 
 const Home = () => (
-  <div className={styles.wrapper}>
+  <>
     <Head>
       <title>Home</title>
     </Head>
-    <Heading tag="h2" text="Next.js + Nest.js" />
-    <Heading text="Todos Application" />
-  </div>
+    <div>
+      <h1 className="font-bold">Todos Application</h1>
+      <div className="flex items-center justify-between mt-4">
+        <Image src="/nest.svg" width={128} height={64} alt="Nest.js" />
+        <span className="mx-4">+</span>
+        <Image src="/next.svg" width={128} height={64} alt="Next.js" />
+      </div>
+    </div>
+  </>
 )
 
 export default Home

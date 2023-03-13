@@ -2,12 +2,10 @@ import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useState, useEffect } from "react"
-
-import Heading from "@/components/Heading"
-import styles from "@/styles/Todos.module.scss"
+import FDate from "@/components/FDate"
 
 // export const getStaticProps = async () => {
-//   const response = await fetch('http://localhost:4200/todos')
+//   const response = await fetch(`${process.env.reqHost}/todos`)
 //   const data = await response.json()
 
 //   if (!data) {
@@ -106,35 +104,57 @@ const Todos = (/*{ todos }*/) => {
 
   return (
     <>
-      <button onClick={handleSignout} className={styles.button}>
-        SignOut
-      </button>
-
       <Head>
         <title>Todos</title>
       </Head>
-      <Heading tag="h2" text="Todos list" />
-      <Link href={`/todos/new`} style={{ color: '#2196f3' }}>
-        Add new todo
-      </Link>
-      <ul className={styles.ul}>
-        {todos && todos.map(({ _id, title, isCompleted }) => (
-          <div key={_id}>
-            <button onClick={handleDelete} data-id={_id}>Del</button>
-            <label style={{ padding: '0 1rem' }}>
-              <input
-                type="checkbox"
-                id={_id}
-                checked={isCompleted}
-                onChange={handleCheck}
-              />
-            </label>
-            <Link href={`/todos/${_id}`} style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>
-              {title}
+      <div className="container">
+        <button className="bg-blue-500 hover:bg-blue-600 text-sm text-transform: uppercase text-white font-bold py-2 px-4 rounded" onClick={handleSignout}>
+          SignOut
+        </button>
+      </div>
+
+      <div className="w-full max-w-md max-h-[600px] overflow-x-scroll m-4 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8">
+        <div className="flex items-center justify-between mb-4">
+          <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">Todos list</h5>
+          <span className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
+            <Link href={`/todos/new`}>
+              Add new todo
             </Link>
-          </div>
-        ))}
-      </ul>
+          </span>
+        </div>
+        <div className="flow-root">
+          <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700">
+            {todos && todos.map(({ _id, title, isCompleted, createdAt }) => (
+              <li className="py-3 sm:py-4" key={_id}>
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <input
+                      type="checkbox"
+                      id={_id}
+                      checked={isCompleted}
+                      onChange={handleCheck}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0 text-start">
+                    <p className="text-sm font-bold text-gray-800 truncate dark:text-white">
+                      <Link href={`/todos/${_id}`} style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>
+                        {title}
+                      </Link>
+                    </p>
+                    <p className="text-sm text-gray-500 truncate dark:text-gray-400">
+                      <FDate date={createdAt} />
+                    </p>
+                  </div>
+                  <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                    <a onClick={handleDelete} data-id={_id} className="text-sm text-transform: uppercase text-blue-600 cursor-pointer font-bold">Del</a>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </>
   )
 }

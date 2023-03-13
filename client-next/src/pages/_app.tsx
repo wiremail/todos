@@ -1,13 +1,9 @@
-import Head from "next/head"
 import Layout from "@/components/Layout"
-import '@/styles/globals.scss'
+import '@/styles/globals.css'
 
 const MyApp = ({ Component, pageProps }: any) => (
   <Layout>
-    <Head>
-      <link href="https://fonts.googleapis.com/css2?family=Inter" rel="stylesheet" />
-    </Head>
-    <main>
+    <main className="bg-zinc-100 text-center text-5xl flex-1 flex flex-wrap items-center justify-center text-zinc-500">
       <Component {...pageProps} />
     </main>
   </Layout>

@@ -1,7 +1,7 @@
-import TodoInfo from "@/components/TodoInfo"
+import TodoForm from "@/components/TodoForm"
 
 export const getStaticPaths = async () => {
-  const response = await fetch('http://localhost:4200/todos/')
+  const response = await fetch(`${process.env.reqHost}/todos/`)
   const data = await response.json()
 
   const paths = data.map(({ _id }) => ({
@@ -16,7 +16,7 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async (context) => {
   const { id } = context.params
-  const response = await fetch(`http://localhost:4200/todos/${id}`)
+  const response = await fetch(`${process.env.reqHost}/todos/${id}`)
   const data = await response.json()
 
   if (!data) {
@@ -51,7 +51,7 @@ const Todo = ({ todo }) => {
   // }, [])
 
   return (
-    <TodoInfo todo={todo} />
+    <TodoForm todo={todo} />
   )
 }
 
