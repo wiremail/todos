@@ -38,11 +38,19 @@ export class TodosService {
     return this.todoModel.findOneAndRemove({ _id: id, userId: user.id })
   }
 
-  async findByUser(user: UserEntity): Promise<Todo[]> {
-    const todos = this.todoModel.find({ userId: user.id }).exec()
+  async findByUser(page: string, user: UserEntity): Promise<Todo[]> {
+    const limit = 5
+    const skip = page ? (+page - 1) * limit : 0
+
+    const todos = this.todoModel.find({ userId: user.id }).skip(skip).limit(limit).exec()
     if (!todos) {
       throw new HttpException('Todos NOT Found', HttpStatus.NOT_FOUND)
     }
     return todos
+  }
+
+  async countUserDocs(user: UserEntity): Promise<number> {
+    const count = await this.todoModel.countDocuments({ userId: user.id }).exec()
+    return count
   }
 }

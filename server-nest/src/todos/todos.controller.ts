@@ -17,7 +17,6 @@ export class TodosController {
   @ApiOperation({ summary: 'Create Todo' })
   @ApiResponse({ status: 200, type: Todo })
   @UsePipes(new ValidationPipe())
-  @HttpCode(200)
   @Post()
   @UseGuards(AuthGuard)
   create(@Body() createTodoDto: CreateTodoDto, @User() user: UserEntity) {
@@ -57,9 +56,15 @@ export class TodosController {
 
   @ApiOperation({ summary: 'Get all user Todos' })
   @ApiResponse({ status: 200, type: [Todo] })
-  @Get('/user/:id')
+  @Get('/user/page/:page')
   @UseGuards(AuthGuard)
-  findByUser(@User() user: UserEntity) {
-    return this.todosService.findByUser(user)
+  findByUser(@Param('page') page: string, @User() user: UserEntity) {
+    return this.todosService.findByUser(page, user)
+  }
+
+  @Get('/user/docs')
+  @UseGuards(AuthGuard)
+  countUserDocs(@User() user: UserEntity) {
+    return this.todosService.countUserDocs(user)
   }
 }

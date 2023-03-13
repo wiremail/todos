@@ -1,5 +1,6 @@
 import Head from "next/head"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/router"
 import { useState, useEffect } from "react"
 import FDate from "@/components/FDate"
@@ -21,8 +22,36 @@ import FDate from "@/components/FDate"
 
 const Todos = (/*{ todos }*/) => {
   const router = useRouter()
-
   const [todos, setTodos] = useState(null)
+  const [page, setPage] = useState(1) //+(router.query?.p ?? '1')
+  const [pages, setPages] = useState(1)
+  const [count, setCount] = useState(0)
+  const entriesPerPage = 5
+
+  useEffect(() => {
+    async function fetchCount() {
+      const jwt = localStorage.getItem('jwt')
+      if (!jwt) {
+        return router.push('/auth')
+      }
+
+      const res = await fetch(`${process.env.reqHost}/todos/user/docs`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("jwt")
+        }
+      })
+
+      if (res.ok) {
+        const count = await res.json()
+        const pages = Math.ceil(count / entriesPerPage)
+        setCount(count)
+        setPages(pages)
+      }
+    }
+
+    fetchCount()
+  }, [todos])
 
   useEffect(() => {
     async function fetchTodos() {
@@ -31,7 +60,7 @@ const Todos = (/*{ todos }*/) => {
         return router.push('/auth')
       }
 
-      const res = await fetch(`${process.env.reqHost}/todos/user/1`, {
+      const res = await fetch(`${process.env.reqHost}/todos/user/page/${page}`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("jwt")
@@ -44,7 +73,7 @@ const Todos = (/*{ todos }*/) => {
     }
 
     fetchTodos()
-  }, [])
+  }, [page])
 
   const handleCheck = async (event) => {
     const id = event.target.id
@@ -94,6 +123,7 @@ const Todos = (/*{ todos }*/) => {
       const copy = [...todos]
       const current = copy.filter(t => t._id !== id)
       setTodos(current)
+      if (!current.length) return setPage(page => page > 1 ? page - 1 : 1)
     }
   }
 
@@ -102,18 +132,25 @@ const Todos = (/*{ todos }*/) => {
     return router.push('/')
   }
 
+  const handlePrevious = () => {
+    setPage(page => page > 1 ? page - 1 : 1)
+  }
+  const handleNext = () => {
+    setPage(page => page < pages ? page + 1 : page)
+  }
+
   return (
     <>
       <Head>
         <title>Todos</title>
       </Head>
-      <div className="container">
+
+      <div className="container  align-text-top">
         <button className="bg-blue-500 hover:bg-blue-600 text-sm text-transform: uppercase text-white font-bold py-2 px-4 rounded" onClick={handleSignout}>
           SignOut
         </button>
       </div>
-
-      <div className="w-full max-w-md max-h-[600px] overflow-x-scroll m-4 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8">
+      <div className="w-full max-w-md m-4 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8">{/* max-h-[600px] overflow-x-scroll */}
         <div className="flex items-center justify-between mb-4">
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">Todos list</h5>
           <span className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
@@ -147,13 +184,32 @@ const Todos = (/*{ todos }*/) => {
                     </p>
                   </div>
                   <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                    <a onClick={handleDelete} data-id={_id} className="text-sm text-transform: uppercase text-blue-600 cursor-pointer font-bold">Del</a>
+                    <Image className="cursor-pointer" onClick={handleDelete} data-id={_id} src="/trash.svg" width={18} height={18} alt="" />
                   </div>
                 </div>
               </li>
             ))}
           </ul>
         </div>
+
+        {
+          pages > 1 &&
+          <div className="flex flex-col items-center  border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+            <span className="text-sm text-gray-700 dark:text-gray-400">
+              Showing <span className="font-semibold text-gray-900 dark:text-white">{(page - 1) * entriesPerPage + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{page * entriesPerPage > count ? count : page * entriesPerPage}</span> of <span className="font-semibold text-gray-900 dark:text-white">{count}</span> Entries
+            </span>
+            <div className="inline-flex justify-between mt-2 xs:mt-0">
+              <button onClick={handlePrevious} className={`inline-flex items-center px-4 py-2 mr-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${page === 1 ? "cursor-not-allowed" : ""}`}>
+                <Image src="/arrow-left.svg" width={12} height={12} alt="" />
+                &nbsp;Previous
+              </button>
+              <button onClick={handleNext} className={`inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${page === pages ? "cursor-not-allowed" : ""}`}>
+                Next&nbsp;
+                <Image src="/arrow-right.svg" width={12} height={12} alt="" />
+              </button>
+            </div>
+          </div>
+        }
       </div>
     </>
   )
