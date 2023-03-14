@@ -28,7 +28,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/pages/todos/index.js"
   ],
   "exclude": [
     "node_modules"

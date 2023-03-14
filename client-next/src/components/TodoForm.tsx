@@ -1,16 +1,16 @@
 import { useRouter } from "next/router"
-import Heading from "./Heading"
+import { ITodo } from "@/pages/types/types"
 
-const TodoForm = ({ todo }) => {
+const TodoForm = (todo: ITodo) => {
   const router = useRouter()
+
+  if (!todo) {
+    return <h3 className="text-sm">Empty todo</h3>
+  }
 
   const { _id, title, description } = todo || {}
 
-  if (!todo) {
-    return <Heading tag="h3" text="Empty todo" />
-  }
-
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault()
 
     const id = event.target.id.value
@@ -46,7 +46,7 @@ const TodoForm = ({ todo }) => {
     <>
       <div className="w-full max-w-sm">
         <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded px-8 pt-6 pb-8 m-5">
-          <h5 className="text-xl font-medium text-gray-900 dark:text-white">Create Todo</h5>
+          <h5 className="text-xl font-medium text-gray-900 dark:text-white">Update Todo</h5>
           <div className="items-center border-b border-grey-500 py-2">
             <input
               className="appearance-none bg-transparent border-none w-full text-sm text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"

@@ -15,7 +15,7 @@ export class TodosController {
   constructor(private readonly todosService: TodosService) { }
 
   @ApiOperation({ summary: 'Create Todo' })
-  @ApiResponse({ status: 200, type: Todo })
+  @ApiResponse({ status: 201, type: Todo })
   @UsePipes(new ValidationPipe())
   @Post()
   @UseGuards(AuthGuard)
@@ -54,7 +54,7 @@ export class TodosController {
     return this.todosService.remove(id, user)
   }
 
-  @ApiOperation({ summary: 'Get all user Todos' })
+  @ApiOperation({ summary: 'Get bunch of Todos' })
   @ApiResponse({ status: 200, type: [Todo] })
   @Get('/user/page/:page')
   @UseGuards(AuthGuard)
@@ -62,6 +62,8 @@ export class TodosController {
     return this.todosService.findByUser(page, user)
   }
 
+  @ApiOperation({ summary: 'Get count of user\'s Todos' })
+  @ApiResponse({ status: 200, type: Number })
   @Get('/user/docs')
   @UseGuards(AuthGuard)
   countUserDocs(@User() user: UserEntity) {

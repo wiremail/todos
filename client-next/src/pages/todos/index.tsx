@@ -3,7 +3,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import { useState, useEffect } from "react"
-import FDate from "@/components/FDate"
+import { ITodo } from "../types/types"
+import DateFormat from "@/components/DateFormat"
 
 // export const getStaticProps = async () => {
 //   const response = await fetch(`${process.env.reqHost}/todos`)
@@ -22,7 +23,7 @@ import FDate from "@/components/FDate"
 
 const Todos = (/*{ todos }*/) => {
   const router = useRouter()
-  const [todos, setTodos] = useState(null)
+  const [todos, setTodos] = useState([])
   const [page, setPage] = useState(1) //+(router.query?.p ?? '1')
   const [pages, setPages] = useState(1)
   const [count, setCount] = useState(0)
@@ -75,16 +76,21 @@ const Todos = (/*{ todos }*/) => {
     fetchTodos()
   }, [page])
 
-  const handleCheck = async (event) => {
-    const id = event.target.id
+  const handleCheck = async (event: React.SyntheticEvent) => {
+    const target = event.target as typeof event.target & {
+      id: string
+      checked: boolean
+    }
+
+    const id = target.id
 
     const copy = [...todos]
-    const current = copy.find(t => t._id === id)
+    const current: any = copy.find((t: ITodo) => t._id === id)
     current.isCompleted = !current.isCompleted
     setTodos(copy)
 
     const data = {
-      isCompleted: event.target.checked,
+      isCompleted: target.checked,
     }
 
     const JSONdata = JSON.stringify(data)
@@ -104,8 +110,15 @@ const Todos = (/*{ todos }*/) => {
     //console.log('response', response)
   }
 
-  const handleDelete = async (event) => {
-    const id = event.currentTarget.dataset.id
+  const handleDelete = async (event: React.SyntheticEvent<HTMLButtonElement>) => {
+
+    const target = event.currentTarget as typeof event.currentTarget & {
+      id: string
+    }
+
+    console.log(target.dataset.id)
+
+    const id = target.dataset.id
 
     const endpoint = `${process.env.reqHost}/todos/${id}`
 
@@ -121,7 +134,7 @@ const Todos = (/*{ todos }*/) => {
 
     if (response.ok) {
       const copy = [...todos]
-      const current = copy.filter(t => t._id !== id)
+      const current = copy.filter((t: ITodo) => t._id !== id)
       setTodos(current)
       if (!current.length) return setPage(page => page > 1 ? page - 1 : 1)
     }
@@ -174,17 +187,19 @@ const Todos = (/*{ todos }*/) => {
                     />
                   </div>
                   <div className="flex-1 min-w-0 text-start">
-                    <p className="text-sm font-bold text-gray-800 truncate dark:text-white">
-                      <Link href={`/todos/${_id}`} style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>
+                    <p className={`text-sm font-bold  truncate dark:text-white ${isCompleted ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                      <Link href={`/todos/${_id}`}>
                         {title}
                       </Link>
                     </p>
                     <p className="text-sm text-gray-500 truncate dark:text-gray-400">
-                      <FDate date={createdAt} />
+                      <DateFormat date={createdAt} />
                     </p>
                   </div>
                   <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                    <Image className="cursor-pointer" onClick={handleDelete} data-id={_id} src="/trash.svg" width={18} height={18} alt="" />
+                    <button className="cursor-pointer" onClick={handleDelete} data-id={_id} >
+                      <Image src="/trash.svg" width={18} height={18} alt="" />
+                    </button>
                   </div>
                 </div>
               </li>
@@ -200,12 +215,12 @@ const Todos = (/*{ todos }*/) => {
             </span>
             <div className="inline-flex justify-between mt-2 xs:mt-0">
               <button onClick={handlePrevious} className={`inline-flex items-center px-4 py-2 mr-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${page === 1 ? "cursor-not-allowed" : ""}`}>
-                <Image src="/arrow-left.svg" width={12} height={12} alt="" />
+                <Image src="/arrow-left.svg" width={12} height={12} alt="Arrow Left" />
                 &nbsp;Previous
               </button>
               <button onClick={handleNext} className={`inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${page === pages ? "cursor-not-allowed" : ""}`}>
                 Next&nbsp;
-                <Image src="/arrow-right.svg" width={12} height={12} alt="" />
+                <Image src="/arrow-right.svg" width={12} height={12} alt="Arrow Right" />
               </button>
             </div>
           </div>

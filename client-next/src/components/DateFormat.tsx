@@ -1,4 +1,4 @@
-const dateFormat = ({ date }) => {
+const formater = (date: Date) => {
   let dt = new Date(date)
   let y = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(dt)
   let m = new Intl.DateTimeFormat('en', { month: 'short' }).format(dt)
@@ -6,12 +6,12 @@ const dateFormat = ({ date }) => {
   return `${d}-${m}-${y}`
 }
 
-const FDate = (date) => {
+const DateFormat = (props: { date: Date }) => {
   return (
     <>
-      {dateFormat(date)}
+      {formater(props.date)}
     </>
   )
 }
 
-export default FDate
+export default DateFormat

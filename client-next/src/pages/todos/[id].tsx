@@ -1,10 +1,12 @@
 import TodoForm from "@/components/TodoForm"
+import { GetStaticPropsContext } from "next"
+import { ITodo } from "../types/types"
 
 export const getStaticPaths = async () => {
   const response = await fetch(`${process.env.reqHost}/todos/`)
   const data = await response.json()
 
-  const paths = data.map(({ _id }) => ({
+  const paths = data.map(({ _id }: { _id: string }) => ({
     params: { id: _id.toString() }
   }))
 
@@ -14,23 +16,23 @@ export const getStaticPaths = async () => {
   }
 }
 
-export const getStaticProps = async (context) => {
-  const { id } = context.params
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const { id }: any = context.params
   const response = await fetch(`${process.env.reqHost}/todos/${id}`)
-  const data = await response.json()
+  const todo = await response.json()
 
-  if (!data) {
+  if (!todo) {
     return {
       notFound: true,
     }
   }
 
   return {
-    props: { todo: data },
+    props: todo,
   }
 }
 
-const Todo = ({ todo }) => {
+const Todo = (todo: ITodo) => {
   // const [todo, setTodo] = useState(null)
 
   // useEffect(() => {
@@ -51,7 +53,7 @@ const Todo = ({ todo }) => {
   // }, [])
 
   return (
-    <TodoForm todo={todo} />
+    <TodoForm {...todo} />
   )
 }
 

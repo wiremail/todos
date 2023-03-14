@@ -3,12 +3,17 @@ import { useRouter } from "next/router"
 const TodoCreate = () => {
   const router = useRouter()
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault()
 
+    const target = event.target as typeof event.target & {
+      title: { value: string }
+      description: { value: string }
+    }
+
     const data = {
-      title: event.target.title.value,
-      description: event.target.description.value,
+      title: target.title.value,
+      description: target.description.value,
     }
 
     const JSONdata = JSON.stringify(data)
