@@ -1,5 +1,5 @@
 import TodoForm from "@/components/TodoForm"
-import { GetStaticPropsContext } from "next"
+import { GetStaticProps, GetStaticPropsContext } from "next"
 import { ITodo } from "../types/types"
 
 export const getStaticPaths = async () => {
@@ -16,8 +16,8 @@ export const getStaticPaths = async () => {
   }
 }
 
-export const getStaticProps = async (context: GetStaticPropsContext) => {
-  const { id }: any = context.params
+export const getStaticProps: GetStaticProps<{ id: string }> = async (context) => {
+  let id: string = context.params!.id as string
   const response = await fetch(`${process.env.reqHost}/todos/${id}`)
   const todo = await response.json()
 
